@@ -155,9 +155,14 @@ client.once(Events.ClientReady, async ready => {
   console.log(`Logged in as ${ready.user.tag}`);
 
   try {
-    const guild = await client.guilds.fetch(GUILD_ID);
+    for (const guild of client.guilds.cache.values()) {
+  try {
     guildData(guild.id).invites = await snapshotInvites(guild);
-    saveData(data);
+  } catch (e) {
+    console.error(`Initial invite snapshot failed for ${guild.id}:`, e.message);
+  }
+}
+saveData(data);
   } catch (e) {
     console.error("Initial invite snapshot failed:", e.message);
   }
